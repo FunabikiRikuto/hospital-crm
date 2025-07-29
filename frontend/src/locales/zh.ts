@@ -1,0 +1,141 @@
+export const zh = {
+  // Common
+  loading: '加载中...',
+  error: '发生了错误',
+  save: '保存',
+  cancel: '取消',
+  edit: '编辑',
+  delete: '删除',
+  create: '创建',
+  back: '返回',
+  next: '下一步',
+  previous: '上一步',
+  search: '搜索',
+  filter: '筛选',
+  export: '导出',
+  download: '下载',
+  upload: '上传',
+  
+  // Navigation
+  dashboard: '仪表板',
+  cases: '医疗旅游案例',
+  newCase: '创建新案例',
+  
+  // Dashboard
+  'dashboard.title': '医疗旅游仪表板',
+  'dashboard.subtitle': '外国患者案例管理和收益状况',
+  'dashboard.totalCases': '总案例数',
+  'dashboard.monthlyRevenue': '本月收入',
+  'dashboard.completionRate': '完成率',
+  'dashboard.urgentCases': '紧急案例',
+  'dashboard.activeCases': '进行中',
+  'dashboard.completedCases': '已完成案例',
+  'dashboard.averageAmount': '平均金额',
+  'dashboard.requiresAction': '需要处理',
+  'dashboard.noIssues': '无问题',
+  'dashboard.recentCases': '最新案例',
+  'dashboard.recentCasesDesc': '最近注册的医疗旅游案例',
+  'dashboard.urgentCasesTitle': '紧急处理案例',
+  'dashboard.urgentCasesDesc': '个紧急案例',
+  'dashboard.noUrgentCases': '没有紧急案例',
+  'dashboard.noUrgentCasesDesc': '目前没有需要紧急处理的案例',
+  'dashboard.nationalityStats': '按国籍分类案例数',
+  'dashboard.nationalityStatsDesc': '外国患者国籍分析',
+  'dashboard.departmentStats': '按科室分类案例数',
+  'dashboard.departmentStatsDesc': '医疗领域案例分析',
+  'dashboard.showAllCases': '显示所有案例',
+  
+  // Case Status
+  'status.new': '新案例',
+  'status.information_needed': '信息不足',
+  'status.under_review': '审核中',
+  'status.confirmed': '已确认',
+  'status.completed': '已完成',
+  'status.cancelled': '已取消',
+  
+  // Urgency
+  'urgency.high': '高',
+  'urgency.medium': '中',
+  'urgency.low': '低',
+  
+  // Gender
+  'gender.male': '男',
+  'gender.female': '女',
+  'gender.other': '其他',
+  
+  // Case Management
+  'cases.title': '医疗旅游案例管理',
+  'cases.subtitle': '外国患者诊疗案例统一管理',
+  'cases.newCase': '创建新案例',
+  'cases.caseList': '案例列表',
+  'cases.casesFound': '找到个案例',
+  'cases.noCasesFound': '未找到案例',
+  'cases.patientName': '患者姓名',
+  'cases.treatmentType': '治疗类型',
+  'cases.hospital': '医院・科室',
+  'cases.preferredDate': '希望日期',
+  'cases.confirmedDate': '确认',
+  'cases.amount': '金额',
+  'cases.estimatedAmount': '预估金额',
+  'cases.confirmedAmount': '确认',
+  'cases.agent': '代理商',
+  'cases.symptoms': '症状・详情',
+  'cases.requirements': '要求・必需材料',
+  'cases.createdAt': '创建日期',
+  'cases.updatedAt': '更新日期',
+  'cases.assignedTo': '负责人',
+  'cases.view': '详情',
+  'cases.edit': '编辑',
+  
+  // Patient Info
+  'patient.info': '患者信息',
+  'patient.name': '患者姓名',
+  'patient.nameOriginal': '原文姓名',
+  'patient.age': '年龄',
+  'patient.gender': '性别',
+  'patient.nationality': '国籍',
+  'patient.passport': '护照号码',
+  'patient.companions': '同行人员',
+  'patient.email': '邮箱地址',
+  'patient.phone': '电话号码',
+  'patient.wechat': '微信号',
+  
+  // Medical Info
+  'medical.info': '医疗信息',
+  'medical.allergies': '过敏信息',
+  'medical.history': '病史',
+  'medical.treatmentType': '治疗类型',
+  'medical.department': '科室',
+  'medical.doctor': '主治医生',
+  'medical.hospital': '医院名称',
+  
+  // Agent Info
+  'agent.info': '代理商信息',
+  'agent.name': '负责人',
+  'agent.company': '公司',
+  'agent.contact': '联系方式',
+  
+  // Actions
+  'actions.startReview': '开始审核',
+  'actions.requestInfo': '要求补充资料',
+  'actions.approve': '接受批准',
+  'actions.reject': '拒绝',
+  'actions.generateQuote': '生成报价单',
+  'actions.downloadDocuments': '下载文件',
+  'actions.scheduleAdjustment': '调整日程',
+  'actions.wechatContact': '微信联系',
+  'actions.cancelCase': '取消案例',
+  
+  // Quick Actions
+  'quickActions.title': '快速操作',
+  'quickActions.newCase': '创建新医疗旅游案例',
+  'quickActions.caseList': '显示案例列表',
+  
+  // Messages
+  'messages.confirmStartReview': '确认开始审核吗？',
+  'messages.confirmApprove': '确认接受批准此案例吗？',
+  'messages.enterRejectionReason': '请输入拒绝理由：',
+  'messages.enterRequiredDocuments': '请输入需要的补充资料：',
+  'messages.statusUpdated': '案例状态已更新为「{status}」',
+  'messages.caseNotFound': '未找到案例',
+}

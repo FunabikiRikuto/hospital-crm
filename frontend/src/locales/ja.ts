@@ -1,0 +1,141 @@
+export const ja = {
+  // Common
+  loading: '読み込み中...',
+  error: 'エラーが発生しました',
+  save: '保存',
+  cancel: 'キャンセル',
+  edit: '編集',
+  delete: '削除',
+  create: '作成',
+  back: '戻る',
+  next: '次へ',
+  previous: '前へ',
+  search: '検索',
+  filter: 'フィルター',
+  export: 'エクスポート',
+  download: 'ダウンロード',
+  upload: 'アップロード',
+  
+  // Navigation
+  dashboard: 'ダッシュボード',
+  cases: '医療ツーリズム案件',
+  newCase: '新規案件作成',
+  
+  // Dashboard
+  'dashboard.title': '医療ツーリズム ダッシュボード',
+  'dashboard.subtitle': '外国人患者の案件管理と収益状況',
+  'dashboard.totalCases': '総案件数',
+  'dashboard.monthlyRevenue': '今月の収益',
+  'dashboard.completionRate': '完了率',
+  'dashboard.urgentCases': '緊急案件',
+  'dashboard.activeCases': '進行中',
+  'dashboard.completedCases': '完了案件',
+  'dashboard.averageAmount': '平均金額',
+  'dashboard.requiresAction': '要対応',
+  'dashboard.noIssues': '問題なし',
+  'dashboard.recentCases': '最新の案件',
+  'dashboard.recentCasesDesc': '最近登録された医療ツーリズム案件',
+  'dashboard.urgentCasesTitle': '緊急対応案件',
+  'dashboard.urgentCasesDesc': '件の緊急案件があります',
+  'dashboard.noUrgentCases': '緊急案件はありません',
+  'dashboard.noUrgentCasesDesc': '現在、緊急対応が必要な案件はありません',
+  'dashboard.nationalityStats': '国籍別案件数',
+  'dashboard.nationalityStatsDesc': '外国人患者の国籍別分析',
+  'dashboard.departmentStats': '診療科別案件数',
+  'dashboard.departmentStatsDesc': '医療分野別の案件分析',
+  'dashboard.showAllCases': '全ての案件を表示',
+  
+  // Case Status
+  'status.new': '新規',
+  'status.information_needed': '情報不足',
+  'status.under_review': '審査中',
+  'status.confirmed': '確定',
+  'status.completed': '完了',
+  'status.cancelled': 'キャンセル',
+  
+  // Urgency
+  'urgency.high': '高',
+  'urgency.medium': '中',
+  'urgency.low': '低',
+  
+  // Gender
+  'gender.male': '男性',
+  'gender.female': '女性',
+  'gender.other': 'その他',
+  
+  // Case Management
+  'cases.title': '医療ツーリズム案件管理',
+  'cases.subtitle': '外国人患者の診療案件を一元管理',
+  'cases.newCase': '新規案件作成',
+  'cases.caseList': '案件一覧',
+  'cases.casesFound': '件の案件が見つかりました',
+  'cases.noCasesFound': '案件が見つかりません',
+  'cases.patientName': '患者名',
+  'cases.treatmentType': '治療内容',
+  'cases.hospital': '病院・診療科',
+  'cases.preferredDate': '希望日',
+  'cases.confirmedDate': '確定',
+  'cases.amount': '金額',
+  'cases.estimatedAmount': '予想金額',
+  'cases.confirmedAmount': '確定',
+  'cases.agent': 'エージェント',
+  'cases.symptoms': '症状・詳細',
+  'cases.requirements': '要求・必要資料',
+  'cases.createdAt': '作成日',
+  'cases.updatedAt': '更新日',
+  'cases.assignedTo': '担当者',
+  'cases.view': '詳細',
+  'cases.edit': '編集',
+  
+  // Patient Info
+  'patient.info': '患者情報',
+  'patient.name': '患者名',
+  'patient.nameOriginal': '原語名',
+  'patient.age': '年齢',
+  'patient.gender': '性別',
+  'patient.nationality': '国籍',
+  'patient.passport': 'パスポート番号',
+  'patient.companions': '同行者',
+  'patient.email': 'メールアドレス',
+  'patient.phone': '電話番号',
+  'patient.wechat': 'WeChat ID',
+  
+  // Medical Info
+  'medical.info': '医療情報',
+  'medical.allergies': 'アレルギー情報',
+  'medical.history': '既往歴',
+  'medical.treatmentType': '治療種別',
+  'medical.department': '診療科',
+  'medical.doctor': '担当医',
+  'medical.hospital': '病院名',
+  
+  // Agent Info
+  'agent.info': 'エージェント情報',
+  'agent.name': '担当者',
+  'agent.company': '会社',
+  'agent.contact': '連絡先',
+  
+  // Actions
+  'actions.startReview': '審査開始',
+  'actions.requestInfo': '追加資料要求',
+  'actions.approve': '受入承認',
+  'actions.reject': '拒否',
+  'actions.generateQuote': '見積書生成',
+  'actions.downloadDocuments': '書類ダウンロード',
+  'actions.scheduleAdjustment': 'スケジュール調整',
+  'actions.wechatContact': 'WeChat連絡',
+  'actions.cancelCase': '案件キャンセル',
+  
+  // Quick Actions
+  'quickActions.title': 'クイックアクション',
+  'quickActions.newCase': '新規医療ツーリズム案件作成',
+  'quickActions.caseList': '案件一覧表示',
+  
+  // Messages
+  'messages.confirmStartReview': '審査を開始しますか？',
+  'messages.confirmApprove': 'この案件を受け入れ承認しますか？',
+  'messages.enterRejectionReason': '拒否理由を入力してください：',
+  'messages.enterRequiredDocuments': '必要な追加資料を入力してください：',
+  'messages.statusUpdated': '案件ステータスを「{status}」に更新しました',
+  'messages.caseNotFound': '案件が見つかりません',
+}

@@ -1,0 +1,172 @@
+import { Case } from '@/types/case'
+
+// 医療観光CRM用モックデータ
+export const validMockCases: Case[] = [
+  {
+    id: 'case-valid-001',
+    patientName: 'サンプル太郎',
+    age: 45,
+    gender: 'male',
+    nationality: '日本',
+    passportNumber: 'A12345678',
+    email: 'sample@example.com',
+    phone: '090-1234-5678',
+    treatmentType: '健康診断',
+    hospitalName: 'サンプル病院',
+    preferredDate: '2025-08-15',
+    estimatedAmount: 100000,
+    currency: 'JPY',
+    urgency: 'medium',
+    status: 'new',
+    description: 'サンプル案件です',
+    hospitalNotes: '',
+    requirements: '',
+    rejectionReason: '',
+    assignedTo: '',
+    
+    // システム情報  
+    createdAt: '2025-07-20T10:00:00.000Z',
+    updatedAt: '2025-07-22T14:30:00.000Z',
+    createdBy: 'hospital-staff-001'
+  },
+  {
+    id: 'case-valid-002',
+    patientName: 'テスト花子',
+    age: 32,
+    gender: 'female',
+    nationality: '韓国',
+    passportNumber: 'B87654321',
+    email: 'test@example.com',
+    phone: '080-9876-5432',
+    treatmentType: '美容整形',
+    hospitalName: 'テスト美容外科',
+    preferredDate: '2025-09-01',
+    estimatedAmount: 500000,
+    currency: 'JPY',
+    urgency: 'low',
+    status: 'under_review',
+    description: 'テスト案件です',
+    hospitalNotes: '',
+    requirements: '',
+    rejectionReason: '',
+    assignedTo: 'スタッフA',
+    
+    // システム情報
+    createdAt: '2025-07-25T09:15:00.000Z',
+    updatedAt: '2025-07-26T11:45:00.000Z',
+    createdBy: 'hospital-staff-002'
+  },
+  {
+    id: 'case-valid-003',
+    patientName: 'ダミー三郎',
+    age: 50,
+    gender: 'male',
+    nationality: '中国',
+    passportNumber: 'C12345678',
+    email: 'dummy@example.com',
+    phone: '070-1111-2222',
+    treatmentType: '内視鏡検査',
+    hospitalName: 'ダミー総合病院',
+    preferredDate: '2025-08-30',
+    estimatedAmount: 200000,
+    currency: 'JPY',
+    urgency: 'high',
+    status: 'information_needed',
+    description: 'ダミー案件です',
+    hospitalNotes: '',
+    requirements: '追加検査が必要',
+    rejectionReason: '',
+    assignedTo: 'スタッフB',
+    
+    // システム情報
+    createdAt: '2025-07-28T16:20:00.000Z',
+    updatedAt: '2025-07-28T16:20:00.000Z',
+    createdBy: 'hospital-staff-001'
+  },
+  {
+    id: 'case-valid-004',
+    patientName: 'モック四郎',
+    age: 35,
+    gender: 'male',
+    nationality: 'タイ',
+    passportNumber: 'D98765432',
+    email: 'mock@example.com',
+    phone: '080-3333-4444',
+    treatmentType: 'MRI検査',
+    hospitalName: 'モック医療センター',
+    preferredDate: '2025-08-10',
+    confirmedDate: '2025-08-12',
+    estimatedAmount: 150000,
+    confirmedAmount: 150000,
+    currency: 'JPY',
+    urgency: 'low',
+    status: 'completed',
+    description: 'モック案件です',
+    hospitalNotes: '検査完了',
+    requirements: '',
+    rejectionReason: '',
+    assignedTo: 'スタッフC',
+    
+    // システム情報
+    createdAt: '2025-07-15T08:30:00.000Z',
+    updatedAt: '2025-07-20T17:00:00.000Z',
+    createdBy: 'hospital-staff-003'
+  },
+  {
+    id: 'case-valid-005',
+    patientName: 'サンプル五子',
+    age: 28,
+    gender: 'female',
+    nationality: 'ベトナム',
+    passportNumber: 'E55443322',
+    email: 'sample5@example.com',
+    phone: '090-5555-6666',
+    treatmentType: '血液検査',
+    hospitalName: 'サンプルクリニック',
+    preferredDate: '2025-09-15',
+    estimatedAmount: 80000,
+    currency: 'JPY',
+    urgency: 'medium',
+    status: 'confirmed',
+    description: 'サンプル案件です',
+    hospitalNotes: '',
+    requirements: '',
+    rejectionReason: '',
+    assignedTo: 'スタッフD',
+    
+    // システム情報
+    createdAt: '2025-07-27T13:45:00.000Z',
+    updatedAt: '2025-07-28T09:30:00.000Z',
+    createdBy: 'hospital-staff-002'
+  },
+  {
+    id: 'case-valid-006',
+    patientName: 'テスト六郎',
+    age: 42,
+    gender: 'male',
+    nationality: 'フィリピン',
+    passportNumber: 'F11223344',
+    email: 'test6@example.com',
+    phone: '070-7777-8888',
+    treatmentType: 'X線検査',
+    hospitalName: 'テスト病院',
+    preferredDate: '2025-08-25',
+    estimatedAmount: 50000,
+    currency: 'JPY',
+    urgency: 'low',
+    status: 'cancelled',
+    description: 'テスト案件です',
+    hospitalNotes: '',
+    requirements: '',
+    rejectionReason: 'キャンセル',
+    assignedTo: 'スタッフE',
+    
+    // システム情報
+    createdAt: '2025-07-18T11:20:00.000Z',
+    updatedAt: '2025-07-24T15:45:00.000Z',
+    createdBy: 'hospital-staff-001'
+  }
+]
+
+// Export for compatibility
+export const mockCases = validMockCases
