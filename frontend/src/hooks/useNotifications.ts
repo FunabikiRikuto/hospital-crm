@@ -1,112 +1,187 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import {
-  Notification,
-  NotificationType,
-  getNotifications,
-  addNotification,
-  markAsRead,
-  markAllAsRead,
-  deleteNotification,
-  cleanupOldNotifications,
-  requestNotificationPermission
-} from '@/lib/notifications'
+import { Notification, CreateNotificationInput } from '@/types/notification'
+import { v4 as uuidv4 } from 'uuid'
 
-export function useNotifications() {
+const STORAGE_KEY = 'medical-tourism-notifications'
+
+// Mock user for demonstration
+const MOCK_USER = {
+  id: 'user-1',
+  wechatId: 'hospital_tokyo_001'
+}
+
+export function useNotifications(userId: string = MOCK_USER.id) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // 通知を読み込み
-  const loadNotifications = useCallback(() => {
+  // 通知取得
+  const fetchNotifications = useCallback(() => {
+    setIsLoading(true)
+    setError(null)
+
     try {
-      const storedNotifications = getNotifications()
-      setNotifications(storedNotifications)
-      setUnreadCount(storedNotifications.filter(n => !n.read).length)
-    } catch (error) {
-      console.error('Failed to load notifications:', error)
+      if (typeof window === 'undefined') {
+        setNotifications([])
+        return
+      }
+
+      const storedNotifications = localStorage.getItem(STORAGE_KEY)
+      let allNotifications: Notification[] = storedNotifications ? JSON.parse(storedNotifications) : []
+      
+      // ユーザーでフィルタリング
+      allNotifications = allNotifications.filter(notification => notification.userId === userId)
+      
+      // 日付降順でソート
+      allNotifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      
+      setNotifications(allNotifications)
+      setUnreadCount(allNotifications.filter(n => !n.isRead).length)
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err)
+      setError('通知の取得に失敗しました')
+      setNotifications([])
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [userId])
 
-  // 初回読み込み
-  useEffect(() => {
-    loadNotifications()
-    cleanupOldNotifications()
-  }, [loadNotifications])
+  // 通知追加
+  const addNotification = useCallback(async (input: CreateNotificationInput): Promise<Notification> => {
+    setError(null)
 
-  // 新しい通知を追加
-  const notify = useCallback((
-    type: NotificationType,
-    title: string,
-    message: string,
-    caseId?: string
-  ) => {
-    addNotification(type, title, message, caseId)
-    loadNotifications() // 状態を更新
-  }, [loadNotifications])
+    try {
+      const newNotification: Notification = {
+        id: uuidv4(),
+        userId: input.userId,
+        caseId: input.caseId,
+        type: input.type,
+        title: input.title,
+        message: input.message,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+        metadata: input.metadata
+      }
+
+      // ローカルストレージから全通知取得
+      const storedNotifications = localStorage.getItem(STORAGE_KEY)
+      const allNotifications: Notification[] = storedNotifications ? JSON.parse(storedNotifications) : []
+      
+      // 新しい通知を追加
+      allNotifications.push(newNotification)
+      
+      // ローカルストレージに保存
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(allNotifications))
+      
+      // WeChat通知のシミュレーション（実際の実装では API を呼び出す）
+      if (shouldSendWeChatNotification(input.type)) {
+        console.log(`[WeChat Notification] To: ${MOCK_USER.wechatId}`, {
+          title: input.title,
+          message: input.message,
+          caseId: input.caseId
+        })
+        newNotification.metadata = {
+          ...newNotification.metadata,
+          wechatSent: true
+        }
+      }
+      
+      // 現在の表示を更新
+      fetchNotifications()
+      
+      return newNotification
+    } catch (err) {
+      console.error('Failed to add notification:', err)
+      setError('通知の追加に失敗しました')
+      throw err
+    }
+  }, [fetchNotifications])
 
   // 通知を既読にする
-  const markNotificationAsRead = useCallback((notificationId: string) => {
-    markAsRead(notificationId)
-    loadNotifications() // 状態を更新
-  }, [loadNotifications])
+  const markAsRead = useCallback(async (notificationId: string): Promise<void> => {
+    setError(null)
 
-  // 全ての通知を既読にする
-  const markAllNotificationsAsRead = useCallback(() => {
-    markAllAsRead()
-    loadNotifications() // 状態を更新
-  }, [loadNotifications])
-
-  // 通知を削除
-  const removeNotification = useCallback((notificationId: string) => {
-    deleteNotification(notificationId)
-    loadNotifications() // 状態を更新
-  }, [loadNotifications])
-
-  // ブラウザ通知の許可を要求
-  const requestPermission = useCallback(async () => {
     try {
-      const permission = await requestNotificationPermission()
-      return permission === 'granted'
-    } catch (error) {
-      console.error('Failed to request notification permission:', error)
-      return false
+      // ローカルストレージから全通知取得
+      const storedNotifications = localStorage.getItem(STORAGE_KEY)
+      const allNotifications: Notification[] = storedNotifications ? JSON.parse(storedNotifications) : []
+      
+      // 指定された通知を既読に更新
+      const updatedNotifications = allNotifications.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, isRead: true }
+          : notification
+      )
+      
+      // ローカルストレージに保存
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotifications))
+      
+      // 現在の表示を更新
+      fetchNotifications()
+    } catch (err) {
+      console.error('Failed to mark as read:', err)
+      setError('既読状態の更新に失敗しました')
+      throw err
     }
-  }, [])
+  }, [fetchNotifications])
 
-  // 便利な通知メソッド
-  const notifySuccess = useCallback((title: string, message: string, caseId?: string) => {
-    notify('success', title, message, caseId)
-  }, [notify])
+  // すべて既読にする
+  const markAllAsRead = useCallback(async (): Promise<void> => {
+    setError(null)
 
-  const notifyError = useCallback((title: string, message: string, caseId?: string) => {
-    notify('error', title, message, caseId)
-  }, [notify])
+    try {
+      // ローカルストレージから全通知取得
+      const storedNotifications = localStorage.getItem(STORAGE_KEY)
+      const allNotifications: Notification[] = storedNotifications ? JSON.parse(storedNotifications) : []
+      
+      // ユーザーの通知をすべて既読に更新
+      const updatedNotifications = allNotifications.map(notification => 
+        notification.userId === userId
+          ? { ...notification, isRead: true }
+          : notification
+      )
+      
+      // ローカルストレージに保存
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotifications))
+      
+      // 現在の表示を更新
+      fetchNotifications()
+    } catch (err) {
+      console.error('Failed to mark all as read:', err)
+      setError('既読状態の更新に失敗しました')
+      throw err
+    }
+  }, [userId, fetchNotifications])
 
-  const notifyWarning = useCallback((title: string, message: string, caseId?: string) => {
-    notify('warning', title, message, caseId)
-  }, [notify])
+  // WeChat通知を送信すべきかどうかを判定
+  function shouldSendWeChatNotification(type: Notification['type']): boolean {
+    // ワークフローに基づき、以下の4つのイベントでWeChat通知を送信
+    const wechatNotificationTypes: Notification['type'][] = [
+      'new_case',             // 新規案件登録完了
+      'status_change',        // 病院判断結果確定
+      'info_request',         // 情報不足時の追加要求
+      'appointment_confirmed' // 予約確定
+    ]
+    
+    return wechatNotificationTypes.includes(type)
+  }
 
-  const notifyInfo = useCallback((title: string, message: string, caseId?: string) => {
-    notify('info', title, message, caseId)
-  }, [notify])
+  // 初回ロード
+  useEffect(() => {
+    fetchNotifications()
+  }, [fetchNotifications])
 
   return {
     notifications,
     unreadCount,
     isLoading,
-    notify,
-    notifySuccess,
-    notifyError,
-    notifyWarning,
-    notifyInfo,
-    markAsRead: markNotificationAsRead,
-    markAllAsRead: markAllNotificationsAsRead,
-    deleteNotification: removeNotification,
-    requestPermission,
-    refresh: loadNotifications
+    error,
+    addNotification,
+    markAsRead,
+    markAllAsRead,
+    refetch: fetchNotifications
   }
 }

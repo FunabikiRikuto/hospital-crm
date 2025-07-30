@@ -15,6 +15,7 @@ import {
   resetStorageWithMockData
 } from '@/lib/storage'
 import { CreateCaseSchema, validateStatusTransition } from '@/schemas/case'
+import { useNotifications } from '@/hooks/useNotifications'
 
 // Enhanced error type
 interface CaseError {
@@ -34,6 +35,7 @@ export function useCases() {
     maxSize: 0,
     usagePercent: 0
   })
+  const { addNotification } = useNotifications()
 
   // Enhanced error handling function
   const handleError = useCallback((err: unknown, defaultMessage: string, type: CaseError['type'] = 'storage'): CaseError => {
@@ -114,6 +116,19 @@ export function useCases() {
       const newCase = addCaseToStorage(validatedData)
       setCases(prev => [...prev, newCase])
       updateStorageInfo()
+      
+      // 新規案件登録通知を作成
+      await addNotification({
+        userId: 'user-1', // TODO: 実際のユーザーIDを使用
+        caseId: newCase.id,
+        type: 'new_case',
+        title: '新規案件登録',
+        message: `新しい案件「${newCase.patientName}」が登録されました`,
+        metadata: {
+          caseName: newCase.patientName,
+          caseStatus: newCase.status
+        }
+      })
       
       return newCase
     } catch (err) {
@@ -196,7 +211,55 @@ export function useCases() {
         updates.confirmedDate = updates.confirmedDate || new Date().toISOString()
       }
       
-      return await updateCase(caseId, updates)
+      const updatedCase = await updateCase(caseId, updates)
+      
+      // 通知を作成
+      if (updatedCase) {
+        let notificationTitle = ''
+        let notificationMessage = ''
+        let notificationType: 'status_change' | 'info_request' | 'appointment_confirmed' = 'status_change'
+        
+        switch (status) {
+          case 'under_review':
+            notificationTitle = '審査開始'
+            notificationMessage = `案件「${currentCase.patientName}」の審査を開始しました`
+            break
+          case 'confirmed':
+            notificationTitle = '受入承認'
+            notificationMessage = `案件「${currentCase.patientName}」が承認されました`
+            notificationType = 'appointment_confirmed'
+            break
+          case 'cancelled':
+            notificationTitle = '案件キャンセル'
+            notificationMessage = `案件「${currentCase.patientName}」がキャンセルされました${reason ? `（理由: ${reason}）` : ''}`
+            break
+          case 'information_needed':
+            notificationTitle = '追加情報要求'
+            notificationMessage = `案件「${currentCase.patientName}」に追加情報が必要です${reason ? `（${reason}）` : ''}`
+            notificationType = 'info_request'
+            break
+          case 'completed':
+            notificationTitle = '診療完了'
+            notificationMessage = `案件「${currentCase.patientName}」の診療が完了しました`
+            break
+        }
+        
+        if (notificationTitle && notificationMessage) {
+          await addNotification({
+            userId: 'user-1', // TODO: 実際のユーザーIDを使用
+            caseId: caseId,
+            type: notificationType,
+            title: notificationTitle,
+            message: notificationMessage,
+            metadata: {
+              caseName: currentCase.patientName,
+              caseStatus: status
+            }
+          })
+        }
+      }
+      
+      return updatedCase
     } catch (err) {
       const errorInfo = handleError(err, 'ステータスの更新に失敗しました', 'business')
       throw new Error(errorInfo.message)

@@ -5,15 +5,19 @@ import { ProtectedLayout } from '@/components/layout/ProtectedLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { Users, Briefcase, TrendingUp, Clock, Globe, AlertTriangle, DollarSign, Calendar, UserCheck, Building, Download } from 'lucide-react'
+import { Users, Briefcase, TrendingUp, Clock, Globe, AlertTriangle, DollarSign, Calendar, UserCheck, Building, Download, Bell, MessageSquare } from 'lucide-react'
 import { getCaseStats, getUrgencyStats, getNationalityStats, getDepartmentStats } from '@/data/mockCases'
 import { useCases } from '@/hooks/useCases'
 import { useI18n } from '@/hooks/useI18n'
 import { exportStatsToCSV } from '@/lib/export'
+import { useNotifications } from '@/hooks/useNotifications'
+import { useChat } from '@/hooks/useChat'
 
 export default function Home() {
   const { cases, isLoading } = useCases()
   const { t } = useI18n()
+  const { notifications } = useNotifications()
+  const { chats } = useChat()
   
   // 医療ツーリズム統計を計算
   const caseStats = getCaseStats(cases)
@@ -69,6 +73,28 @@ export default function Home() {
   const recentCases = [...cases]
     .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
     .slice(0, 5)
+    
+  // 未読通知を取得
+  const unreadNotifications = notifications.filter(n => !n.isRead).slice(0, 5)
+  
+  // 未返信のチャットを取得
+  const unreadChats = chats
+    .filter(chat => {
+      // ローカルストレージからメッセージを取得
+      const messagesStr = localStorage.getItem('medical-tourism-chat-messages')
+      const messages = messagesStr ? JSON.parse(messagesStr) : []
+      const chatMessages = messages.filter((m: any) => m.chatId === chat.id)
+      const unreadCount = chatMessages.filter((m: any) => !m.isRead && m.senderId !== 'user-1').length
+      return unreadCount > 0
+    })
+    .map(chat => {
+      const messagesStr = localStorage.getItem('medical-tourism-chat-messages')
+      const messages = messagesStr ? JSON.parse(messagesStr) : []
+      const chatMessages = messages.filter((m: any) => m.chatId === chat.id)
+      const unreadCount = chatMessages.filter((m: any) => !m.isRead && m.senderId !== 'user-1').length
+      return { ...chat, unreadCount }
+    })
+    .slice(0, 5)
 
   return (
     <ProtectedLayout>
@@ -120,6 +146,107 @@ export default function Home() {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Notifications and Unread Chats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Unread Notifications */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Bell className="h-5 w-5 mr-2 text-orange-600" />
+                未読通知
+              </CardTitle>
+              <CardDescription>
+                {unreadNotifications.length > 0 ? `${unreadNotifications.length}件の未読通知があります` : '未読通知はありません'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {unreadNotifications.length === 0 ? (
+                <div className="text-center py-8">
+                  <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">未読の通知はありません</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {unreadNotifications.map((notification) => (
+                    <div key={notification.id} className="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
+                      <Bell className="h-4 w-4 text-orange-600 mt-1" />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 text-sm">{notification.title}</p>
+                        <p className="text-sm text-gray-600">{notification.message}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(notification.createdAt).toLocaleString('ja-JP')}
+                        </p>
+                      </div>
+                      {notification.metadata?.caseId && (
+                        <Link href={`/cases/${notification.metadata.caseId}`}>
+                          <Button variant="ghost" size="sm" className="text-xs">
+                            詳細
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Unread Chats */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <MessageSquare className="h-5 w-5 mr-2 text-green-600" />
+                未返信チャット
+              </CardTitle>
+              <CardDescription>
+                {unreadChats.length > 0 ? `${unreadChats.length}件の未返信メッセージがあります` : '未返信メッセージはありません'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {unreadChats.length === 0 ? (
+                <div className="text-center py-8">
+                  <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">未返信のメッセージはありません</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {unreadChats.map((chat: any) => {
+                    const case_ = cases.find(c => c.id === chat.caseId)
+                    if (!case_) return null
+                    
+                    return (
+                      <Link key={chat.id} href={`/cases/${chat.caseId}`}>
+                        <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 cursor-pointer">
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900">{chat.caseName}</p>
+                            <p className="text-sm text-gray-600">{case_.treatmentType}</p>
+                            {chat.lastMessage && (
+                              <p className="text-xs text-gray-500 mt-1 truncate">
+                                {chat.lastMessage}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Badge className="bg-red-500 text-white">
+                              {chat.unreadCount}
+                            </Badge>
+                            <p className="text-xs text-gray-500">
+                              {chat.lastMessageTime && new Date(chat.lastMessageTime).toLocaleTimeString('ja-JP', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recent Cases and Urgent Cases */}

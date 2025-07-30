@@ -14,6 +14,9 @@ import { ArrowLeft, Edit3, User, FileText, Calendar, Loader2, Globe, Users, Mess
 import { useCases } from '@/hooks/useCases'
 import { useI18n } from '@/hooks/useI18n'
 import { exportPatientDetailToCSV } from '@/lib/export'
+import { CommentSection } from '@/components/comments/CommentSection'
+import { ChatPanel } from '@/components/chat/ChatPanel'
+import { useChatUnread } from '@/hooks/useChatUnread'
 import type { Case } from '@/types/case'
 
 export default function CaseDetailPage() {
@@ -24,8 +27,11 @@ export default function CaseDetailPage() {
   const [caseData, setCaseData] = useState<Case | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  
 
   const caseId = params.id as string
+  const unreadCount = useChatUnread(caseId)
 
   // 案件ステータス更新関数
   const handleUpdateStatus = async (newStatus: string, reason?: string) => {
@@ -98,7 +104,7 @@ export default function CaseDetailPage() {
     if (caseId) {
       fetchCaseData()
     }
-  }, [caseId, t])
+  }, [caseId]) // tを依存配列から削除
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ja-JP')
@@ -234,6 +240,21 @@ export default function CaseDetailPage() {
                 編集
               </Button>
             </Link>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                setIsChatOpen(prev => !prev);
+              }}
+              className="relative"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              チャット
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </Button>
             {caseData.status === 'new' && (
               <Button 
                 variant="outline" 
@@ -285,6 +306,7 @@ export default function CaseDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <CaseBasicInfo caseData={caseData} />
             <CaseDetailInfo caseData={caseData} />
+            <CommentSection caseId={caseData.id!} />
             <CaseTimeline caseData={caseData} />
           </div>
 
@@ -405,6 +427,19 @@ export default function CaseDetailPage() {
                 <CardTitle>関連アクション</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => setIsChatOpen(true)}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  チャット
+                  {unreadCount > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
+                      {unreadCount}
+                    </span>
+                  )}
+                </Button>
                 <Button variant="outline" className="w-full justify-start">
                   <FileText className="h-4 w-4 mr-2" />
                   見積書生成
@@ -417,12 +452,6 @@ export default function CaseDetailPage() {
                   <Calendar className="h-4 w-4 mr-2" />
                   スケジュール調整
                 </Button>
-                {caseData.wechatId && (
-                  <Button variant="outline" className="w-full justify-start">
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    WeChat連絡
-                  </Button>
-                )}
                 {caseData.status !== 'completed' && caseData.status !== 'cancelled' && (
                   <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50">
                     案件キャンセル
@@ -460,6 +489,15 @@ export default function CaseDetailPage() {
           </div>
         </div>
       </div>
+      
+      {/* Chat Panel */}
+      {caseData && (
+        <ChatPanel 
+          caseData={caseData}
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+        />
+      )}
     </ProtectedLayout>
   )
 }

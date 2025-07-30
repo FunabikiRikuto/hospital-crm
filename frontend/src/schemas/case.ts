@@ -45,7 +45,13 @@ export const ContactSchema = z.object({
     .or(z.literal('')),
   
   wechatId: z.string()
-    .max(50, 'WeChat IDは50文字以内で入力してください')
+    .max(50, 'エージェントWeChat IDは50文字以内で入力してください')
+    .regex(/^[a-zA-Z0-9_-]*$/, 'WeChat IDは英数字、アンダースコア、ハイフンのみ使用可能です')
+    .optional()
+    .or(z.literal('')),
+  
+  patientWechatId: z.string()
+    .max(50, '患者WeChat IDは50文字以内で入力してください')
     .regex(/^[a-zA-Z0-9_-]*$/, 'WeChat IDは英数字、アンダースコア、ハイフンのみ使用可能です')
     .optional()
     .or(z.literal(''))

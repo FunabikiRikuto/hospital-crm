@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.6",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.4.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^18.3.23",

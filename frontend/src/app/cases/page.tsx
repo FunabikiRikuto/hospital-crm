@@ -403,9 +403,10 @@ export default function CasesPage() {
             ) : (
               <div className="space-y-4">
                 {cases.map((caseItem) => (
-                  <div key={caseItem.id} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
+                  <Link key={caseItem.id} href={`/cases/${caseItem.id}`} passHref>
+                    <div className="border rounded-lg p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
                         <div className="flex items-center space-x-4 mb-3">
                           <h3 className="text-lg font-medium text-gray-900">
                             {caseItem.patientName}
@@ -493,21 +494,22 @@ export default function CasesPage() {
                       </div>
 
                       <div className="flex space-x-2 ml-4">
-                        <Link href={`/cases/${caseItem.id}`}>
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-4 w-4 mr-1" />
-                            詳細
-                          </Button>
-                        </Link>
-                        <Link href={`/cases/${caseItem.id}/edit`}>
-                          <Button variant="outline" size="sm">
-                            <Edit3 className="h-4 w-4 mr-1" />
-                            編集
-                          </Button>
-                        </Link>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = `/cases/${caseItem.id}/edit`;
+                          }}
+                        >
+                          <Edit3 className="h-4 w-4 mr-1" />
+                          編集
+                        </Button>
                       </div>
                     </div>
                   </div>
+                  </Link>
                 ))}
               </div>
             )}

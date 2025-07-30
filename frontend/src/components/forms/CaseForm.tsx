@@ -21,6 +21,7 @@ interface CaseFormData {
   email?: string
   phone?: string
   wechatId?: string
+  patientWechatId?: string
   
   // 診療情報
   treatmentType: string
@@ -82,10 +83,11 @@ export function CaseForm({ initialData, mode, onSubmit, onCancel }: CaseFormProp
     email: initialData?.email || '',
     phone: initialData?.phone || '',
     wechatId: initialData?.wechatId || '',
+    patientWechatId: initialData?.patientWechatId || '',
     
     // 診療情報
     treatmentType: initialData?.treatmentType || '',
-    hospitalName: initialData?.hospitalName || '',
+    hospitalName: '東京総合病院', // 固定値
     doctorName: initialData?.doctorName || '',
     department: initialData?.department || '',
     preferredDate: initialData?.preferredDate || '',
@@ -313,10 +315,17 @@ export function CaseForm({ initialData, mode, onSubmit, onCancel }: CaseFormProp
               />
 
               <Input
-                label="WeChat ID"
+                label="エージェント WeChat ID"
                 value={formData.wechatId}
                 onChange={(e) => handleChange('wechatId', e.target.value)}
-                placeholder="例：wangxm2025"
+                placeholder="例：agent_wang123"
+              />
+
+              <Input
+                label="患者 WeChat ID"
+                value={formData.patientWechatId}
+                onChange={(e) => handleChange('patientWechatId', e.target.value)}
+                placeholder="例：patient_zhang456"
               />
 
               <Input
@@ -360,13 +369,14 @@ export function CaseForm({ initialData, mode, onSubmit, onCancel }: CaseFormProp
                 required
               />
 
-              <Input
-                label="病院名 *"
-                value={formData.hospitalName}
-                onChange={(e) => handleChange('hospitalName', e.target.value)}
-                placeholder="例：東京総合病院"
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  病院名 *
+                </label>
+                <div className="px-3 py-2 bg-gray-100 rounded-md text-gray-700">
+                  東京総合病院
+                </div>
+              </div>
 
               <Input
                 label="担当医師"

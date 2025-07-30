@@ -1,23 +1,25 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { X, Bell, MessageSquare, AlertCircle, Calendar, ExternalLink } from 'lucide-react'
-import { useNotifications } from '@/hooks/useNotifications'
-import { Button } from '@/components/ui/Button'
-import { cn } from '@/lib/utils'
+import Link from 'next/link'
 import { Notification } from '@/types/notification'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { Bell, MessageSquare, AlertCircle, CheckCircle, Calendar, ExternalLink } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-interface NotificationPanelProps {
-  isOpen: boolean
+interface NotificationDropdownProps {
+  notifications: Notification[]
+  onMarkAsRead: (notificationId: string) => Promise<void>
+  onMarkAllAsRead: () => Promise<void>
   onClose: () => void
 }
 
-export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
-  const router = useRouter()
-  const { notifications, markAsRead, markAllAsRead } = useNotifications()
-
-  if (!isOpen) return null
-
+export function NotificationDropdown({ 
+  notifications, 
+  onMarkAsRead, 
+  onMarkAllAsRead,
+  onClose 
+}: NotificationDropdownProps) {
   const getIcon = (type: Notification['type']) => {
     switch (type) {
       case 'new_case':
@@ -37,10 +39,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
 
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.isRead) {
-      await markAsRead(notification.id)
-    }
-    if (notification.caseId) {
-      router.push(`/cases/${notification.caseId}`)
+      await onMarkAsRead(notification.id)
     }
     onClose()
   }
@@ -48,43 +47,24 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
   const unreadCount = notifications.filter(n => !n.isRead).length
 
   return (
-    <div 
-      className="fixed right-0 top-0 h-full w-96 bg-white shadow-xl border-l flex flex-col z-50"
-      style={{ zIndex: 9999 }}>
-      {/* Header */}
-      <div className="border-b p-4 bg-white">
+    <Card className="absolute right-0 mt-2 w-96 max-h-[600px] overflow-hidden shadow-lg z-20">
+      <CardHeader className="border-b">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <h3 className="font-semibold text-gray-900">通知</h3>
-            {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                {unreadCount}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center space-x-2">
-            {unreadCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={markAllAsRead}
-                className="text-xs"
-              >
-                すべて既読
-              </Button>
-            )}
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-md transition-colors"
+          <CardTitle className="text-lg">通知</CardTitle>
+          {unreadCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onMarkAllAsRead}
+              className="text-xs"
             >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+              すべて既読にする
+            </Button>
+          )}
         </div>
-      </div>
+      </CardHeader>
       
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <CardContent className="p-0 max-h-[500px] overflow-y-auto">
         {notifications.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
             <Bell className="h-12 w-12 mx-auto mb-2 text-gray-300" />
@@ -131,10 +111,14 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
                       </p>
                       
                       {notification.caseId && (
-                        <span className="text-xs text-blue-600 flex items-center">
+                        <Link
+                          href={`/cases/${notification.caseId}`}
+                          className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           案件詳細
                           <ExternalLink className="h-3 w-3 ml-1" />
-                        </span>
+                        </Link>
                       )}
                     </div>
                   </div>
@@ -143,7 +127,7 @@ export function NotificationPanel({ isOpen, onClose }: NotificationPanelProps) {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

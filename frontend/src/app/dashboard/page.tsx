@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ProtectedLayout } from '@/components/layout/ProtectedLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -12,6 +13,7 @@ import { useI18n } from '@/hooks/useI18n'
 import { exportStatsToCSV } from '@/lib/export'
 
 export default function Dashboard() {
+  const router = useRouter()
   const { cases, isLoading } = useCases()
   const { t } = useI18n()
   
@@ -198,8 +200,11 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-4">
                 {recentCases.map((caseItem) => (
-                  <Link key={caseItem.id} href={`/cases/${caseItem.id}`}>
-                    <div className="flex items-center justify-between p-4 border rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div 
+                    key={caseItem.id} 
+                    onClick={() => router.push(`/cases/${caseItem.id}`)}
+                    className="flex items-center justify-between p-4 border rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
                       <div className="flex items-center space-x-4">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                           <Globe className="h-5 w-5 text-blue-600" />
@@ -215,7 +220,6 @@ export default function Dashboard() {
                         <p className="text-sm text-gray-500 mt-1">{caseItem.createdAt ? new Date(caseItem.createdAt).toLocaleDateString('ja-JP') : '不明'}</p>
                       </div>
                     </div>
-                  </Link>
                 ))}
               </div>
               <div className="mt-4 pt-4 border-t">
@@ -243,8 +247,11 @@ export default function Dashboard() {
               {urgentCases.length > 0 ? (
                 <div className="space-y-4">
                   {urgentCases.map((caseItem) => (
-                    <Link key={caseItem.id} href={`/cases/${caseItem.id}`}>
-                      <div className="flex items-center justify-between p-4 border border-red-200 rounded-md bg-red-50 hover:bg-red-100 transition-colors cursor-pointer">
+                    <div 
+                      key={caseItem.id} 
+                      onClick={() => router.push(`/cases/${caseItem.id}`)}
+                      className="flex items-center justify-between p-4 border border-red-200 rounded-md bg-red-50 hover:bg-red-100 transition-colors cursor-pointer"
+                    >
                         <div className="flex items-center space-x-4">
                           <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                             <AlertTriangle className="h-5 w-5 text-red-600" />
@@ -260,7 +267,6 @@ export default function Dashboard() {
                           <Badge className="bg-red-100 text-red-800 mt-1">緊急</Badge>
                         </div>
                       </div>
-                    </Link>
                   ))}
                 </div>
               ) : (

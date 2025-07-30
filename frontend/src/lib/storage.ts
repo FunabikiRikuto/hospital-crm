@@ -5,7 +5,7 @@ import { realisticMockCases } from '@/data/realisticMockCases'
 
 const STORAGE_KEY = 'medical-tourism-cases'
 const STORAGE_VERSION_KEY = 'medical-tourism-cases-version'
-const STORAGE_VERSION = '1.0.0' // バージョンを変更すると、既存データがリセットされます
+const STORAGE_VERSION = '1.0.4' // バージョンを変更すると、既存データがリセットされます
 const MAX_STORAGE_SIZE = 4 * 1024 * 1024 // 4MB limit for localStorage
 
 // Error classes for better error handling
@@ -313,6 +313,74 @@ export function initializeStorageWithMockData(): void {
       // バージョンが異なる場合は、既存データを削除
       localStorage.removeItem(STORAGE_KEY)
       localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION)
+      
+      // コメントのモックデータも初期化
+      const { mockComments } = require('@/data/mockComments')
+      localStorage.setItem('medical-tourism-comments', JSON.stringify(mockComments))
+      
+      // チャットのモックデータも初期化
+      try {
+        // 実際のケースIDを取得して、チャットデータを生成
+        const cases = realisticMockCases.slice(0, 3) // 最初の3件にチャットを作成
+        const mockChats = cases.map((c, index) => ({
+          id: `chat-${index + 1}`,
+          caseId: c.id,
+          caseName: c.patientName,
+          participants: [
+            { id: 'user-1', name: '田中太郎', role: 'hospital', wechatId: 'hospital_tokyo_001' },
+            { id: 'agent-1', name: c.agentName || 'エージェント', role: 'agent', wechatId: c.wechatId },
+            { id: 'patient-1', name: c.patientName, role: 'patient', wechatId: c.patientWechatId }
+          ],
+          lastMessage: index === 0 ? '患者様から追加の質問があります。' : undefined,
+          lastMessageTime: index === 0 ? new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() : undefined,
+          unreadCount: index === 0 ? 2 : index === 1 ? 1 : 0,
+          isActive: true,
+          createdAt: new Date(Date.now() - (7 - index) * 24 * 60 * 60 * 1000).toISOString()
+        }))
+        
+        // モックメッセージも生成
+        const mockChatMessages = [
+          {
+            id: uuidv4(),
+            chatId: 'chat-1',
+            senderId: 'agent-1',
+            senderName: cases[0].agentName || 'エージェント',
+            senderRole: 'agent',
+            content: '患者様から追加の質問があります。手術後のリハビリ期間について詳しく教えてください。',
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+            isRead: false
+          },
+          {
+            id: uuidv4(),
+            chatId: 'chat-1',
+            senderId: 'patient-1',
+            senderName: cases[0].patientName,
+            senderRole: 'patient',
+            content: '費用の支払い方法について確認したいです。',
+            timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+            isRead: false
+          },
+          {
+            id: uuidv4(),
+            chatId: 'chat-2',
+            senderId: 'agent-1',
+            senderName: cases[1].agentName || 'エージェント',
+            senderRole: 'agent',
+            content: '患者様が手術日程を変更したいとのことです。',
+            timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+            isRead: false
+          }
+        ]
+        
+        localStorage.setItem('medical-tourism-chats', JSON.stringify(mockChats))
+        localStorage.setItem('medical-tourism-chat-messages', JSON.stringify(mockChatMessages))
+      } catch (err) {
+        console.error('Failed to initialize chat mock data:', err)
+      }
+      
+      // 通知のモックデータも初期化
+      const { mockNotifications } = require('@/data/mockNotifications')
+      localStorage.setItem('medical-tourism-notifications', JSON.stringify(mockNotifications))
     }
     
     const existing = getCasesFromStorage()

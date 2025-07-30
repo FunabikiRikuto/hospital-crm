@@ -6,12 +6,14 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

@@ -90,6 +90,7 @@ export interface CreateCaseInput {
   email?: string
   phone?: string
   wechatId?: string
+  patientWechatId?: string
   
   // 診療情報
   treatmentType: string
