@@ -3,7 +3,8 @@
 import { 
   Briefcase, 
   UserCheck,
-  ChevronRight 
+  ChevronRight,
+  Users
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -18,6 +19,7 @@ export function Sidebar() {
   const navigation = [
     { name: t('cases'), href: '/cases', icon: Briefcase },
     { name: t('newCase'), href: '/cases/new', icon: UserCheck },
+    { name: 'エージェント', href: '/agents', icon: Users },
   ]
 
   return (

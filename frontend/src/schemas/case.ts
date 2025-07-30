@@ -149,8 +149,14 @@ export const AgentSchema = z.object({
 // Case status validation schema
 export const CaseStatusSchema = z.enum([
   'new',
-  'information_needed', 
-  'under_review',
+  'pending',
+  'reviewing',
+  'accepted',
+  'rejected',
+  'additional_info_required',
+  'information_needed', // 後方互換性のため
+  'under_review', // 後方互換性のため
+  'scheduled',
   'confirmed',
   'completed',
   'cancelled'
@@ -244,12 +250,19 @@ export const UpdateCaseSchema = CaseSchema.partial().extend({
 
 // Status transition validation
 export const ValidStatusTransitions: Record<string, string[]> = {
-  'new': ['information_needed', 'under_review', 'cancelled'],
-  'information_needed': ['under_review', 'cancelled'],
-  'under_review': ['confirmed', 'cancelled', 'information_needed'],
+  'new': ['pending', 'reviewing', 'additional_info_required', 'rejected', 'cancelled'],
+  'pending': ['reviewing', 'additional_info_required', 'rejected', 'cancelled'],
+  'reviewing': ['accepted', 'rejected', 'additional_info_required', 'cancelled'],
+  'accepted': ['scheduled', 'cancelled'],
+  'rejected': [], // Terminal state
+  'additional_info_required': ['reviewing', 'rejected', 'cancelled'],
+  'scheduled': ['confirmed', 'cancelled'],
   'confirmed': ['completed', 'cancelled'],
   'completed': [], // Terminal state
-  'cancelled': []  // Terminal state
+  'cancelled': [], // Terminal state
+  // 後方互換性
+  'information_needed': ['under_review', 'cancelled'],
+  'under_review': ['confirmed', 'cancelled', 'information_needed']
 }
 
 // Function to validate status transitions

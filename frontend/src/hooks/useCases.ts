@@ -183,7 +183,7 @@ export function useCases() {
   }, [cases])
 
   // ケースステータス更新（ワークフロー用）
-  const updateCaseStatus = useCallback(async (caseId: string, status: Case['status'], reason?: string): Promise<Case> => {
+  const updateCaseStatus = useCallback(async (caseId: string, status: Case['status'], data?: any): Promise<Case> => {
     try {
       setError(null)
       
@@ -201,11 +201,36 @@ export function useCases() {
       const updates: Partial<Case> = { status }
       
       // ステータスに応じて追加フィールドを更新
-      if (status === 'cancelled' && reason) {
-        updates.rejectionReason = reason
-      } else if (status === 'information_needed' && reason) {
-        updates.requirements = reason
-      } else if (status === 'confirmed') {
+      if (typeof data === 'string') {
+        // 後方互換性のため、文字列の場合は理由として扱う
+        if (status === 'cancelled') {
+          updates.rejectionReason = data
+        } else if (status === 'information_needed') {
+          updates.requirements = data
+        }
+      } else if (data && typeof data === 'object') {
+        // オブジェクトの場合は詳細データを処理
+        if (data.comment) {
+          if (status === 'cancelled' || status === 'rejected') {
+            updates.rejectionReason = data.comment
+          }
+        }
+        if (data.requiredDocuments) {
+          updates.requirements = data.requiredDocuments.join('\n')
+        }
+        if (data.quote) {
+          updates.quote = data.quote
+        }
+        // その他のデータもマージ
+        Object.keys(data).forEach(key => {
+          if (!['comment', 'requiredDocuments', 'quote'].includes(key)) {
+            updates[key] = data[key]
+          }
+        })
+      }
+      
+      // ステータス固有の更新
+      if (status === 'confirmed' || status === 'accepted') {
         updates.confirmedDate = new Date().toISOString()
       } else if (status === 'completed') {
         updates.confirmedDate = updates.confirmedDate || new Date().toISOString()
@@ -230,13 +255,20 @@ export function useCases() {
             notificationType = 'appointment_confirmed'
             break
           case 'cancelled':
-            notificationTitle = '案件キャンセル'
-            notificationMessage = `案件「${currentCase.patientName}」がキャンセルされました${reason ? `（理由: ${reason}）` : ''}`
+          case 'rejected':
+            notificationTitle = status === 'cancelled' ? '案件キャンセル' : '案件拒否'
+            notificationMessage = `案件「${currentCase.patientName}」が${status === 'cancelled' ? 'キャンセル' : '拒否'}されました${updates.rejectionReason ? `（理由: ${updates.rejectionReason}）` : ''}`
             break
           case 'information_needed':
+          case 'additional_info_required':
             notificationTitle = '追加情報要求'
-            notificationMessage = `案件「${currentCase.patientName}」に追加情報が必要です${reason ? `（${reason}）` : ''}`
+            notificationMessage = `案件「${currentCase.patientName}」に追加情報が必要です${updates.requirements ? `（${updates.requirements.split('\n')[0]}...）` : ''}`
             notificationType = 'info_request'
+            break
+          case 'accepted':
+            notificationTitle = '受入承認'
+            notificationMessage = `案件「${currentCase.patientName}」が受け入れ承認されました`
+            notificationType = 'appointment_confirmed'
             break
           case 'completed':
             notificationTitle = '診療完了'

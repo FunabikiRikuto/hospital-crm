@@ -7,6 +7,7 @@ import { ProtectedLayout } from '@/components/layout/ProtectedLayout'
 import { CaseBasicInfo } from '@/components/features/cases/CaseBasicInfo'
 import { CaseDetailInfo } from '@/components/features/cases/CaseDetailInfo'
 import { CaseTimeline } from '@/components/features/cases/CaseTimeline'
+import { CaseReviewPanel } from '@/components/features/cases/CaseReviewPanel'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
@@ -34,16 +35,43 @@ export default function CaseDetailPage() {
   const unreadCount = useChatUnread(caseId)
 
   // 案件ステータス更新関数
-  const handleUpdateStatus = async (newStatus: string, reason?: string) => {
+  const handleUpdateStatus = async (newStatus: string, data?: any) => {
     try {
       setIsLoading(true)
       
-      const updatedCase = await updateCaseStatus(caseId, newStatus as Case['status'], reason)
-      setCaseData(updatedCase)
+      // データに応じて適切な更新を行う
+      let updatedCase: Case
+      if (data) {
+        // 詳細データがある場合は、それに応じて更新
+        const updateData: any = {
+          status: newStatus,
+          ...data
+        }
+        
+        // 見積情報がある場合
+        if (data.quote) {
+          updateData.quote = data.quote
+        }
+        
+        // 必要書類リストがある場合
+        if (data.requiredDocuments) {
+          updateData.requirements = data.requiredDocuments.join('\n')
+        }
+        
+        // 拒否理由がある場合
+        if (newStatus === 'rejected' && data.comment) {
+          updateData.rejectionReason = data.comment
+        }
+        
+        updatedCase = await updateCaseStatus(caseId, newStatus as Case['status'], updateData)
+      } else {
+        updatedCase = await updateCaseStatus(caseId, newStatus as Case['status'])
+      }
       
-      alert(t('messages.statusUpdated', { status: t(`status.${newStatus}`) }))
+      setCaseData(updatedCase)
+      alert('審査結果を送信しました')
     } catch (err) {
-      alert(err instanceof Error ? err.message : t('error'))
+      alert(err instanceof Error ? err.message : 'エラーが発生しました')
     } finally {
       setIsLoading(false)
     }
@@ -304,6 +332,11 @@ export default function CaseDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* メイン情報 */}
           <div className="lg:col-span-2 space-y-6">
+            <CaseReviewPanel 
+              caseData={caseData} 
+              onUpdateStatus={handleUpdateStatus}
+              isLoading={isLoading}
+            />
             <CaseBasicInfo caseData={caseData} />
             <CaseDetailInfo caseData={caseData} />
             <CommentSection caseId={caseData.id!} />

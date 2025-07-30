@@ -89,11 +89,20 @@ export default function CasesPage() {
   const getStatusBadge = (status: Case['status']) => {
     switch (status) {
       case 'new':
+      case 'pending':
         return <Badge className="bg-blue-100 text-blue-800">新規</Badge>
       case 'information_needed':
+      case 'additional_info_required':
         return <Badge className="bg-orange-100 text-orange-800">情報不足</Badge>
       case 'under_review':
+      case 'reviewing':
         return <Badge className="bg-yellow-100 text-yellow-800">審査中</Badge>
+      case 'accepted':
+        return <Badge className="bg-green-100 text-green-800">受入承認</Badge>
+      case 'rejected':
+        return <Badge className="bg-red-100 text-red-800">拒否</Badge>
+      case 'scheduled':
+        return <Badge className="bg-indigo-100 text-indigo-800">予約済</Badge>
       case 'confirmed':
         return <Badge className="bg-green-100 text-green-800">確定</Badge>
       case 'completed':

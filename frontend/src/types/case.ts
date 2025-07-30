@@ -71,6 +71,14 @@ export interface LegacyCase {
     uploadedAt: string
   }>
   
+  // 見積情報
+  quote?: {
+    medicalFee: number
+    estimatedDays: number
+    notes?: string
+    validUntil?: string
+  }
+  
   // システム情報
   createdAt: string
   updatedAt: string
