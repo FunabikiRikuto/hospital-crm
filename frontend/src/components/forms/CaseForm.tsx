@@ -54,7 +54,7 @@ interface CaseFormData {
   rejectionReason?: string
   
   // 案件管理
-  status: 'new' | 'information_needed' | 'under_review' | 'confirmed' | 'completed' | 'cancelled'
+  status: 'new' | 'pending' | 'reviewing' | 'accepted' | 'rejected' | 'additional_info_required' | 'information_needed' | 'under_review' | 'scheduled' | 'confirmed' | 'completed' | 'cancelled'
   assignedTo?: string
 }
 

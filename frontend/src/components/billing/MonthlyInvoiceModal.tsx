@@ -142,10 +142,10 @@ export function MonthlyInvoiceModal({
                     {/* 請求先（エージェント） */}
                     <div>
                       <h4 className="font-semibold mb-2">請求先</h4>
-                      <p className="text-sm">{invoiceData.agent.companyName}</p>
-                      <p className="text-sm text-gray-600">担当: {invoiceData.agent.contactName}</p>
-                      <p className="text-sm text-gray-600">TEL: {invoiceData.agent.phone}</p>
-                      <p className="text-sm text-gray-600">Email: {invoiceData.agent.email}</p>
+                      <p className="text-sm">{invoiceData.agent?.companyName || 'N/A'}</p>
+                      <p className="text-sm text-gray-600">担当: {invoiceData.agent?.contactName || 'N/A'}</p>
+                      <p className="text-sm text-gray-600">TEL: {invoiceData.agent?.phone || 'N/A'}</p>
+                      <p className="text-sm text-gray-600">Email: {invoiceData.agent?.email || 'N/A'}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -156,7 +156,7 @@ export function MonthlyInvoiceModal({
                 <CardHeader>
                   <CardTitle>請求明細</CardTitle>
                   <CardDescription>
-                    手数料率: {(invoiceData.agent.contractInfo.commissionRate * 100).toFixed(0)}%
+                    手数料率: {(invoiceData.agent?.contractInfo.commissionRate ? invoiceData.agent.contractInfo.commissionRate * 100 : 0).toFixed(0)}%
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

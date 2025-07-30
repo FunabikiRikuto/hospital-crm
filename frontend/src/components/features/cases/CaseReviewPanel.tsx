@@ -112,7 +112,7 @@ export function CaseReviewPanel({ caseData, onUpdateStatus, isLoading = false }:
           <Label>審査アクション</Label>
           <div className="grid grid-cols-3 gap-3">
             <Button
-              variant={reviewAction === 'accept' ? 'default' : 'outline'}
+              variant={reviewAction === 'accept' ? 'primary' : 'outline'}
               className={reviewAction === 'accept' ? 'bg-green-600 hover:bg-green-700' : ''}
               onClick={() => setReviewAction('accept')}
               disabled={isLoading}
@@ -121,7 +121,7 @@ export function CaseReviewPanel({ caseData, onUpdateStatus, isLoading = false }:
               受け入れ
             </Button>
             <Button
-              variant={reviewAction === 'request_info' ? 'default' : 'outline'}
+              variant={reviewAction === 'request_info' ? 'primary' : 'outline'}
               className={reviewAction === 'request_info' ? 'bg-orange-600 hover:bg-orange-700' : ''}
               onClick={() => setReviewAction('request_info')}
               disabled={isLoading}
@@ -130,7 +130,7 @@ export function CaseReviewPanel({ caseData, onUpdateStatus, isLoading = false }:
               情報不足
             </Button>
             <Button
-              variant={reviewAction === 'reject' ? 'default' : 'outline'}
+              variant={reviewAction === 'reject' ? 'primary' : 'outline'}
               className={reviewAction === 'reject' ? 'bg-red-600 hover:bg-red-700' : ''}
               onClick={() => setReviewAction('reject')}
               disabled={isLoading}

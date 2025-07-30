@@ -10,21 +10,19 @@ interface I18nContextType {
   t: (key: string, params?: Record<string, string>) => string
 }
 
-const translations: Record<Language, Record<string, string>> = {
+const translations: Record<Language, Record<string, any>> = {
   ja: {
     cases: '案件管理',
     newCase: '新規案件登録',
     dashboard: 'ダッシュボード',
     loading: '読み込み中...',
     error: 'エラーが発生しました',
-    messages: {
-      caseNotFound: '案件が見つかりません',
-      statusUpdated: 'ステータスを{status}に更新しました',
-      confirmStartReview: '審査を開始しますか？',
-      confirmApprove: 'この案件を承認しますか？',
-      enterRejectionReason: '拒否理由を入力してください',
-      enterRequiredDocuments: '必要な追加資料を入力してください'
-    }
+    'messages.caseNotFound': '案件が見つかりません',
+    'messages.statusUpdated': 'ステータスを{status}に更新しました',
+    'messages.confirmStartReview': '審査を開始しますか？',
+    'messages.confirmApprove': 'この案件を承認しますか？',
+    'messages.enterRejectionReason': '拒否理由を入力してください',
+    'messages.enterRequiredDocuments': '必要な追加資料を入力してください'
   },
   en: {
     cases: 'Case Management',

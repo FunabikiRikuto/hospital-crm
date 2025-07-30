@@ -210,21 +210,21 @@ export function useCases() {
         }
       } else if (data && typeof data === 'object') {
         // オブジェクトの場合は詳細データを処理
-        if (data.comment) {
+        if ('comment' in data && data.comment) {
           if (status === 'cancelled' || status === 'rejected') {
             updates.rejectionReason = data.comment
           }
         }
-        if (data.requiredDocuments) {
+        if ('requiredDocuments' in data && data.requiredDocuments) {
           updates.requirements = data.requiredDocuments.join('\n')
         }
-        if (data.quote) {
-          updates.quote = data.quote
+        if ('quote' in data && data.quote) {
+          (updates as any).quote = data.quote
         }
         // その他のデータもマージ
         Object.keys(data).forEach(key => {
           if (!['comment', 'requiredDocuments', 'quote'].includes(key)) {
-            updates[key] = data[key]
+            (updates as any)[key] = (data as any)[key]
           }
         })
       }
