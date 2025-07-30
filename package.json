@@ -1,0 +1,9 @@
+{
+  "name": "hospital-crm",
+  "version": "1.0.0",
+  "description": "Hospital CRM Monorepo",
+  "scripts": {
+    "vercel-build": "cd frontend && npm install && npm run build"
+  },
+  "private": true
+}
