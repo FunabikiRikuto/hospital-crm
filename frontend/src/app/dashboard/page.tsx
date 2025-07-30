@@ -6,7 +6,7 @@ import { ProtectedLayout } from '@/components/layout/ProtectedLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { Users, Briefcase, TrendingUp, Clock, Globe, AlertTriangle, DollarSign, Calendar, UserCheck, Building, Download } from 'lucide-react'
+import { Users, Briefcase, TrendingUp, Clock, Globe, AlertTriangle, DollarSign, Calendar, UserCheck, Building, Download, Bell, MessageSquare, CheckCircle } from 'lucide-react'
 import { getCaseStats, getUrgencyStats, getNationalityStats, getDepartmentStats } from '@/data/mockCases'
 import { useCases } from '@/hooks/useCases'
 import { useI18n } from '@/hooks/useI18n'
@@ -27,6 +27,17 @@ export default function Dashboard() {
   const activeCases = caseStats.byStatus.new + caseStats.byStatus.information_needed + 
                      caseStats.byStatus.under_review + caseStats.byStatus.confirmed
   
+  // 未対応案件数（新規のみ）
+  const pendingCases = caseStats.byStatus.new
+  
+  // 本日の予約数
+  const todayAppointments = cases.filter(c => {
+    if (!c.confirmedDate) return false
+    const appointmentDate = new Date(c.confirmedDate)
+    const today = new Date()
+    return appointmentDate.toDateString() === today.toDateString()
+  }).length
+  
   // 月間収益（完了案件の合計）
   const monthlyRevenue = caseStats.monthlyRevenue
   
@@ -38,32 +49,36 @@ export default function Dashboard() {
   
   const stats = [
     {
-      title: '総案件数',
-      value: caseStats.total.toString(),
-      description: `進行中: ${activeCases}件`,
-      icon: Briefcase,
+      title: '未対応案件',
+      value: pendingCases.toString(),
+      description: pendingCases > 0 ? '新規受信あり' : '対応完了',
+      icon: Bell,
+      color: pendingCases > 0 ? 'text-red-600' : 'text-green-600',
+      link: '/cases?status=new'
+    },
+    {
+      title: '本日の予約',
+      value: todayAppointments.toString(),
+      description: `本日の診療予定`,
+      icon: Calendar,
       color: 'text-blue-600',
+      link: '/cases?status=confirmed'
     },
     {
       title: '今月の収益',
       value: monthlyRevenue > 0 ? `¥${(monthlyRevenue / 1000000).toFixed(1)}M` : '¥0',
-      description: `完了案件: ${caseStats.byStatus.completed}件`,
+      description: `完了: ${caseStats.byStatus.completed}件`,
       icon: TrendingUp,
       color: 'text-green-600',
+      link: '/billing'
     },
     {
-      title: '完了率',
-      value: `${completionRate.toFixed(1)}%`,
-      description: `平均金額: ¥${(caseStats.averageAmount / 10000).toFixed(0)}万`,
-      icon: DollarSign,
-      color: 'text-purple-600',
-    },
-    {
-      title: '緊急案件',
-      value: urgentCasesCount.toString(),
-      description: urgentCasesCount > 0 ? '要対応' : '問題なし',
-      icon: AlertTriangle,
-      color: urgentCasesCount > 0 ? 'text-red-600' : 'text-orange-600',
+      title: '情報不足',
+      value: caseStats.byStatus.information_needed.toString(),
+      description: caseStats.byStatus.information_needed > 0 ? '追加資料待ち' : 'なし',
+      icon: MessageSquare,
+      color: caseStats.byStatus.information_needed > 0 ? 'text-orange-600' : 'text-gray-600',
+      link: '/cases?status=information_needed'
     },
   ]
 
@@ -168,7 +183,11 @@ export default function Dashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <Card key={stat.title}>
+            <Card 
+              key={stat.title}
+              className={stat.link ? "hover:shadow-lg transition-shadow cursor-pointer" : ""}
+              onClick={() => stat.link && router.push(stat.link)}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   {stat.title}

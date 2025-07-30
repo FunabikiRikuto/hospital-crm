@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import casesRouter from './routes/cases';
+import agentsRouter from './routes/agents';
 
 dotenv.config();
 
@@ -32,6 +34,10 @@ app.get('/api', (req, res) => {
     version: '1.0.0'
   });
 });
+
+// API Routes
+app.use('/api/cases', casesRouter);
+app.use('/api/agents', agentsRouter);
 
 // 404 handler
 app.use('*', (req, res) => {

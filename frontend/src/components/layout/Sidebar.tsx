@@ -4,7 +4,8 @@ import {
   Briefcase, 
   UserCheck,
   ChevronRight,
-  Users
+  Users,
+  DollarSign
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -20,6 +21,7 @@ export function Sidebar() {
     { name: t('cases'), href: '/cases', icon: Briefcase },
     { name: t('newCase'), href: '/cases/new', icon: UserCheck },
     { name: 'エージェント', href: '/agents', icon: Users },
+    { name: '請求管理', href: '/billing', icon: DollarSign },
   ]
 
   return (
