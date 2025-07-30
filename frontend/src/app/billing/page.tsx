@@ -12,6 +12,7 @@ import { DollarSign, FileText, Download, Calendar, TrendingUp, Users, CheckCircl
 import type { Billing, MonthlyInvoice } from '@/types/billing'
 import type { Agent } from '@/types/agent'
 import { useCases } from '@/hooks/useCases'
+import { MonthlyInvoiceModal } from '@/components/billing/MonthlyInvoiceModal'
 
 // モックデータ
 const mockBillings: Billing[] = [
@@ -116,6 +117,8 @@ export default function BillingPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [selectedMonth, setSelectedMonth] = useState<string>('2024-12')
   const [searchTerm, setSearchTerm] = useState('')
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+  const [invoiceAgentId, setInvoiceAgentId] = useState<string | undefined>()
 
   // 統計計算
   const stats = {
@@ -154,9 +157,9 @@ export default function BillingPage() {
     return `¥${amount.toLocaleString()}`
   }
 
-  const handleGenerateInvoice = (agentId: string) => {
-    // 請求書生成処理
-    alert(`エージェント ${agentId} の請求書を生成します`)
+  const handleGenerateInvoice = (agentId?: string) => {
+    setInvoiceAgentId(agentId)
+    setIsInvoiceModalOpen(true)
   }
 
   const getCaseInfo = (caseId: string) => {
@@ -177,7 +180,7 @@ export default function BillingPage() {
             <h1 className="text-3xl font-bold text-gray-900">請求管理</h1>
             <p className="text-gray-600 mt-1">手数料計算と請求書管理</p>
           </div>
-          <Button>
+          <Button onClick={() => handleGenerateInvoice()}>
             <FileText className="h-5 w-5 mr-2" />
             月次請求書生成
           </Button>
@@ -368,16 +371,42 @@ export default function BillingPage() {
                         </td>
                         <td className="p-4">
                           <div>
-                            <p className="font-medium">{caseInfo?.patientName || '不明'}</p>
+                            <p className="font-medium">
+                              {caseInfo ? (
+                                <a 
+                                  href={`/cases/${billing.caseId}`}
+                                  className="text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                  {caseInfo.patientName}
+                                </a>
+                              ) : (
+                                '不明'
+                              )}
+                            </p>
                             <p className="text-sm text-gray-500">{caseInfo?.treatmentType || '-'}</p>
+                            <p className="text-xs text-gray-400">ID: {billing.caseId}</p>
                           </div>
                         </td>
                         <td className="p-4">
                           <div>
-                            <p className="font-medium">{agentInfo?.companyName || '不明'}</p>
+                            <p className="font-medium">
+                              {agentInfo ? (
+                                <a 
+                                  href={`/agents/${billing.agentId}`}
+                                  className="text-purple-600 hover:text-purple-800 hover:underline"
+                                >
+                                  {agentInfo.companyName}
+                                </a>
+                              ) : (
+                                '不明'
+                              )}
+                            </p>
                             <p className="text-sm text-gray-500">
                               手数料率: {(billing.commissionRate * 100).toFixed(0)}%
                             </p>
+                            {agentInfo && (
+                              <p className="text-xs text-gray-400">担当: {agentInfo.contactName}</p>
+                            )}
                           </div>
                         </td>
                         <td className="p-4 text-right">
@@ -494,6 +523,20 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* 月次請求書生成モーダル */}
+      <MonthlyInvoiceModal
+        isOpen={isInvoiceModalOpen}
+        onClose={() => {
+          setIsInvoiceModalOpen(false)
+          setInvoiceAgentId(undefined)
+        }}
+        month={selectedMonth}
+        agentId={invoiceAgentId}
+        billings={billings}
+        agents={agents}
+        cases={cases}
+      />
     </ProtectedLayout>
   )
 }
