@@ -217,21 +217,21 @@ export default function AgentsPage() {
           </div>
           <div className="flex gap-2">
             <Button
-              variant={statusFilter === 'all' ? 'default' : 'outline'}
+              variant={statusFilter === 'all' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('all')}
             >
               すべて
             </Button>
             <Button
-              variant={statusFilter === 'active' ? 'default' : 'outline'}
+              variant={statusFilter === 'active' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('active')}
             >
               アクティブ
             </Button>
             <Button
-              variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+              variant={statusFilter === 'inactive' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setStatusFilter('inactive')}
             >

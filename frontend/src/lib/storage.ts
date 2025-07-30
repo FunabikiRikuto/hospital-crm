@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Case } from '@/types/case'
 import { CaseSchema, CreateCaseSchema, validateStatusTransition, sanitizeString } from '@/schemas/case'
-import { realisticMockCases } from '@/data/realisticMockCases'
+import { lightMockCases } from '@/data/mockCasesLight'
 
 const STORAGE_KEY = 'medical-tourism-cases'
 const STORAGE_VERSION_KEY = 'medical-tourism-cases-version'
@@ -321,7 +321,7 @@ export function initializeStorageWithMockData(): void {
       // チャットのモックデータも初期化
       try {
         // 実際のケースIDを取得して、チャットデータを生成
-        const cases = realisticMockCases.slice(0, 3) // 最初の3件にチャットを作成
+        const cases = lightMockCases.slice(0, 3) // 最初の3件にチャットを作成
         const mockChats = cases.map((c, index) => ({
           id: `chat-${index + 1}`,
           caseId: c.id,
@@ -387,8 +387,8 @@ export function initializeStorageWithMockData(): void {
     if (existing.length === 0 || needsReset) {
       try {
         // データは既にスキーマ準拠なので、そのまま保存
-        saveCasesToStorage(realisticMockCases)
-        console.log(`✅ 初期データを${realisticMockCases.length}件読み込みました`)
+        saveCasesToStorage(lightMockCases)
+        console.log(`✅ 初期データを${lightMockCases.length}件読み込みました`)
         
         // バージョンを保存
         localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION)
@@ -436,8 +436,8 @@ export function resetStorageWithMockData(): void {
     
     // 新しいモックデータを強制読み込み
     try {
-        saveCasesToStorage(realisticMockCases)
-        console.log(`✅ 新しいモックデータを${realisticMockCases.length}件読み込みました`)
+        saveCasesToStorage(lightMockCases)
+        console.log(`✅ 新しいモックデータを${lightMockCases.length}件読み込みました`)
         
         // バージョンを保存
         localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION)
