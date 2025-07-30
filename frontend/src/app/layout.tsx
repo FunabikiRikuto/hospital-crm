@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { I18nProvider } from "@/contexts/I18nContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -32,7 +34,11 @@ export default function RootLayout({
         className={`${inter.variable} ${notoSansJP.variable} antialiased`}
       >
         <AuthProvider>
-          {children}
+          <NotificationProvider>
+            <I18nProvider>
+              {children}
+            </I18nProvider>
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>
